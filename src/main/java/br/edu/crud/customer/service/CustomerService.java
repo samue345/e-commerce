@@ -33,34 +33,19 @@ public final class CustomerService {
     }
 
     public Customer create(CustomerRequestDto request) {
-        CustomerRequestDto sanitizedRequest = sanitizeAndValidate(request);
-        return repository.create(sanitizedRequest);
+        return repository.create(request.sanitize());
     }
 
     public Customer update(CustomerRequestDto request) {
-        CustomerRequestDto sanitizedRequest = sanitizeAndValidate(request);
-        if (sanitizedRequest.id() == null) {
-            throw new IllegalArgumentException("Customer id is required for update");
+        CustomerRequestDto updateRequest = request.prepareForUpdate();
+        if (!repository.update(updateRequest.id(), updateRequest)) {
+            throw new CustomerNotFoundException(updateRequest.id());
         }
-        if (!repository.update(sanitizedRequest.id(), sanitizedRequest)) {
-            throw new CustomerNotFoundException(sanitizedRequest.id());
-        }
-        return findById(sanitizedRequest.id());
+        return findById(updateRequest.id());
     }
 
     public void delete(long id) {
         if (!repository.delete(id)) throw new CustomerNotFoundException(id);
     }
 
-    private static CustomerRequestDto sanitizeAndValidate(CustomerRequestDto request) {
-        CustomerRequestDto sanitized = request == null ? null : request.sanitize();
-        if (sanitized == null || sanitized.name() == null || sanitized.name().isBlank()
-                || sanitized.email() == null || sanitized.email().isBlank()
-                || !sanitized.email().matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
-                || sanitized.city() == null || sanitized.city().isBlank()
-                || sanitized.age() == null || sanitized.age() < 18 || sanitized.age() > 120) {
-            throw new IllegalArgumentException("Invalid customer data");
-        }
-        return sanitized;
-    }
 }
