@@ -34,10 +34,15 @@ public final class CustomerService {
         return repository.create(sanitizedRequest);
     }
 
-    public Customer update(long id, CustomerRequestDto request) {
+    public Customer update(CustomerRequestDto request) {
         CustomerRequestDto sanitizedRequest = sanitizeAndValidate(request);
-        if (!repository.update(id, sanitizedRequest)) throw new CustomerNotFoundException(id);
-        return findById(id);
+        if (sanitizedRequest.id() == null) {
+            throw new IllegalArgumentException("Customer id is required for update");
+        }
+        if (!repository.update(sanitizedRequest.id(), sanitizedRequest)) {
+            throw new CustomerNotFoundException(sanitizedRequest.id());
+        }
+        return findById(sanitizedRequest.id());
     }
 
     public void delete(long id) {

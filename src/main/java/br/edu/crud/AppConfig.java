@@ -38,17 +38,18 @@ public final class AppConfig {
         return Javalin.create()
                 .get("/health", ctx -> ctx.json(java.util.Map.of("status", "UP")))
                 .get("/clientes/{id}", ctx -> ctx.json(customerController.findById(
-                        Long.parseLong(ctx.pathParam("id")))))
+                        new br.edu.crud.customer.CustomerIdRequestDto(
+                                Long.parseLong(ctx.pathParam("id"))))))
                 .get("/clientes", ctx -> ctx.json(customerController.list(
                         br.edu.crud.customer.CustomerListRequestDto.from(ctx))))
                 .post("/clientes", ctx -> ctx.status(HttpStatus.CREATED).json(
                         customerController.create(ctx.bodyAsClass(
                                 br.edu.crud.customer.CustomerRequestDto.class))))
-                .put("/clientes/{id}", ctx -> ctx.json(customerController.update(
-                        Long.parseLong(ctx.pathParam("id")),
+                .put("/clientes", ctx -> ctx.json(customerController.update(
                         ctx.bodyAsClass(br.edu.crud.customer.CustomerRequestDto.class))))
                 .delete("/clientes/{id}", ctx -> {
-                    customerController.delete(Long.parseLong(ctx.pathParam("id")));
+                    customerController.delete(new br.edu.crud.customer.CustomerIdRequestDto(
+                            Long.parseLong(ctx.pathParam("id"))));
                     ctx.status(HttpStatus.NO_CONTENT);
                 })
                 .exception(br.edu.crud.customer.CustomerNotFoundException.class, (exception, ctx) ->

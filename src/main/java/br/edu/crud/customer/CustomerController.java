@@ -9,9 +9,9 @@ public final class CustomerController {
         this.mapper = mapper;
     }
 
-    public CustomerResponseDto findById(long id) {
+    public CustomerResponseDto findById(CustomerIdRequestDto request) {
 
-        return mapper.toResponse(service.findById(id));
+        return mapper.toResponse(service.findById(request.id()));
     }
 
     public CursorPage<CustomerResponseDto> list(CustomerListRequestDto request)
@@ -24,12 +24,12 @@ public final class CustomerController {
         return mapper.toResponse(service.create(request));
     }
 
-    public CustomerResponseDto update(long id, CustomerRequestDto request) {
-        return mapper.toResponse(service.update(id, request));
+    public CustomerResponseDto update(CustomerRequestDto request) {
+        return mapper.toResponse(service.update(request));
     }
 
-    public void delete(long id) {
-        service.delete(id);
+    public void delete(CustomerIdRequestDto request) {
+        service.delete(request.id());
     }
 
 }
