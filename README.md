@@ -4,40 +4,42 @@ Este projeto implementa uma API CRUD de clientes. Ele foi criado para estudar
 o comportamento de uma aplicação web quando vários clientes fazem leituras e
 escritas ao mesmo tempo.
 
-## Especificação do trabalho
+## Especificação do trabalho e andamento
 
 O primeiro trabalho consiste em implementar uma aplicação CRUD, envolvendo
 clientes, servidor web e banco de dados, e avaliar o desempenho da aplicação
-quanto a leituras e escritas nos seguintes cenários:
+quanto a leituras e escritas.
 
-- **A)** 50% de leituras e 50% de escritas;
-- **B)** 75% de leituras e 25% de escritas;
-- **C)** 25% de leituras e 75% de escritas.
+### Requisitos da aplicação e dos experimentos
 
-A avaliação deve considerar que o sistema está sendo usado por diferentes
-clientes. Pode ser usada uma ferramenta de teste de carga, como o Apache
-JMeter. Por exemplo, para 100 clientes simultâneos, o cenário A deve usar 50
-clientes fazendo leituras e 50 clientes fazendo escritas.
-
-O banco deve ser populado com um dataset de pelo menos 50 mil registros,
-disponível na internet, ou com um dataset criado por um gerador de dados.
-Também devem ser analisados os seguintes pontos:
-
-- o que acontece com o desempenho quando o dataset é reduzido para 20 mil
-  registros;
-- o que acontece quando são adicionados índices no banco de dados;
-- qual índice deve ser escolhido;
-- se o desempenho das consultas melhora com o índice;
-- como a escolha entre um banco SQL e um banco NoSQL impacta o sistema.
+- ✅ Implementar uma aplicação CRUD envolvendo clientes, servidor web e banco
+  de dados.
+- ❌ Avaliar o desempenho da aplicação quanto a leituras e escritas.
+- ❌ Executar o cenário **A**: 50% de leituras e 50% de escritas.
+- ❌ Executar o cenário **B**: 75% de leituras e 25% de escritas.
+- ❌ Executar o cenário **C**: 25% de leituras e 75% de escritas.
+- ❌ Considerar diferentes clientes simultâneos durante a avaliação. Por
+  exemplo, para 100 clientes no cenário A, usar 50 clientes para leitura e 50
+  para escrita.
+- ✅ Preparar um plano de teste com o Apache JMeter.
+- ✅ Preparar grupos de usuários para operações de leitura e escrita.
+- ✅ Popular o banco com pelo menos 50 mil registros. Neste projeto, os dados
+  são criados localmente por um gerador reproduzível.
+- ❌ Avaliar o que acontece quando o dataset é reduzido para 20 mil registros.
+- ❌ Avaliar o que acontece com a adição de índices no banco de dados.
+- ❌ Escolher um índice para o experimento.
+- ❌ Verificar se o desempenho das consultas melhora com o índice.
+- ❌ Avaliar como a escolha entre um banco SQL e um banco NoSQL impacta o
+  sistema.
 
 ### Entrega
 
-- Entrega no Moodle em PDF: **30 de setembro de 2026**;
-- Parte 1: definição da aplicação, projeto da arquitetura e cenário dos
-  experimentos;
-- Parte 2: avaliação da arquitetura por meio dos experimentos;
-- Entrega atrasada permitida até **5 de outubro de 2026**, com desconto de um
-  ponto por dia de atraso.
+- ❌ Entregar o trabalho em PDF no Moodle até **30 de setembro de 2026**.
+- ✅ Preparar a definição da aplicação, o projeto da arquitetura e o cenário
+  dos experimentos da Parte 1.
+- ❌ Realizar a avaliação da arquitetura por meio dos experimentos da Parte 2.
+- ❌ Considerar a entrega atrasada até **5 de outubro de 2026**, com desconto
+  de um ponto por dia de atraso, caso seja necessário.
 
 Esta especificação foi incluída no README para separar claramente o que já foi
 implementado daquilo que ainda precisa ser medido no experimento.
@@ -49,27 +51,27 @@ de desempenho dos cenários A, B e C ainda não foi realizada.
 
 ### Checklist
 
-- [x] Definição de uma aplicação CRUD de clientes.
-- [x] API Java com operações de criação, leitura, atualização e remoção.
-- [x] Servidor web com Javalin.
-- [x] Banco de dados PostgreSQL.
-- [x] Duas instâncias Java para receber requisições.
-- [x] Nginx como proxy reverso e load balancer.
-- [x] Docker Compose para executar a arquitetura.
-- [x] Dataset local e reproduzível com 50 mil registros.
-- [x] Geração alternativa de dataset com 20 mil registros.
-- [x] Paginação por cursor sem executar `COUNT(*)`.
-- [x] Plano de teste inicial do Apache JMeter.
-- [x] Configuração dos cenários de leitura e escrita no plano JMeter.
-- [ ] Executar o cenário A: 50% de leituras e 50% de escritas.
-- [ ] Executar o cenário B: 75% de leituras e 25% de escritas.
-- [ ] Executar o cenário C: 25% de leituras e 75% de escritas.
-- [ ] Repetir os cenários usando 20 mil registros.
-- [ ] Medir tempo de resposta, throughput e erros.
-- [ ] Criar e avaliar índices adicionais.
-- [ ] Comparar os resultados com e sem índice.
-- [ ] Avaliar o impacto da escolha entre SQL e NoSQL.
-- [ ] Organizar os resultados e conclusões no PDF final.
+- ✅ Definição de uma aplicação CRUD de clientes.
+- ✅ API Java com operações de criação, leitura, atualização e remoção.
+- ✅ Servidor web com Javalin.
+- ✅ Banco de dados PostgreSQL.
+- ✅ Duas instâncias Java para receber requisições.
+- ✅ Nginx como proxy reverso e load balancer.
+- ✅ Docker Compose para executar a arquitetura.
+- ✅ Dataset local e reproduzível com 50 mil registros.
+- ✅ Geração alternativa de dataset com 20 mil registros.
+- ✅ Paginação por cursor sem executar `COUNT(*)`.
+- ✅ Plano de teste inicial do Apache JMeter.
+- ✅ Configuração dos cenários de leitura e escrita no plano JMeter.
+- ❌ Executar o cenário A: 50% de leituras e 50% de escritas.
+- ❌ Executar o cenário B: 75% de leituras e 25% de escritas.
+- ❌ Executar o cenário C: 25% de leituras e 75% de escritas.
+- ❌ Repetir os cenários usando 20 mil registros.
+- ❌ Medir tempo de resposta, throughput e erros.
+- ❌ Criar e avaliar índices adicionais.
+- ❌ Comparar os resultados com e sem índice.
+- ❌ Avaliar o impacto da escolha entre SQL e NoSQL.
+- ❌ Organizar os resultados e conclusões no PDF final.
 
 ### Estado atual dos índices
 
