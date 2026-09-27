@@ -170,6 +170,9 @@ Execute os comandos a partir da raiz do projeto.
 docker compose up -d --build
 ```
 
+O Docker Compose inicia os containers, mas a população do banco é feita por um
+script separado. Essa separação deixa cada script responsável por uma tarefa.
+
 Esse comando inicia:
 
 - um PostgreSQL;
@@ -217,27 +220,11 @@ script Python e contém somente as colunas necessárias para este trabalho:
 O gerador usa uma semente fixa. Portanto, executar o script novamente com os
 mesmos parâmetros produz a mesma massa de dados.
 
-### 6.1 Gerar 50 mil registros
+### 6.1 Gerar o CSV e popular o banco
 
-```bash
-python3 database/generate_dataset.py --rows 50000
-```
-
-O arquivo será criado em:
-
-```text
-database/data/clientes_50000.csv
-```
-
-### 6.2 Gerar 20 mil registros
-
-```bash
-python3 database/generate_dataset.py --rows 20000
-```
-
-### 6.3 Popular o banco
-
-Com o PostgreSQL em execução:
+Com o PostgreSQL em execução, o script abaixo faz as duas etapas
+automaticamente: gera o CSV caso ele não exista e carrega os registros no
+banco.
 
 ```bash
 bash database/populate_database.sh 50000
@@ -257,6 +244,15 @@ O script:
 4. reinicia os IDs;
 5. carrega o CSV usando o comando `COPY` do PostgreSQL;
 6. informa quantos registros foram carregados.
+
+Se for necessário gerar somente o arquivo CSV, sem carregar o banco, o gerador
+Python também pode ser executado diretamente:
+
+```bash
+python3 database/generate_dataset.py --rows 50000
+```
+
+O arquivo será criado em `database/data/clientes_50000.csv`.
 
 Para confirmar a quantidade de registros:
 
