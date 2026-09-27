@@ -3,12 +3,18 @@ package br.edu.crud.database;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-public record DatabaseConfig(String jdbcUrl, String username, String password,
-                             int maximumPoolSize) {
+public record DatabaseConfig(
+        String jdbcUrl,
+        String username,
+        String password,
+        int maximumPoolSize
+)
+{
     public static DatabaseConfig fromEnvironment() {
         String host = env("DB_HOST", "localhost");
         String port = env("DB_PORT", "5432");
         String name = env("DB_NAME", "clientes_db");
+
         return new DatabaseConfig(
                 "jdbc:postgresql://%s:%s/%s".formatted(host, port, name),
                 env("DB_USER", "clientes_user"),
