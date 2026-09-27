@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public final class JdbcCustomerRepository implements CustomerRepository {
     private static final String CUSTOMER_COLUMNS =
-            "id, nome, email, cidade, idade, criado_em";
+            "id, name, email, city, age, created_at";
 
     private final DataSource dataSource;
 
@@ -26,7 +26,7 @@ public final class JdbcCustomerRepository implements CustomerRepository {
     @Override
     public Optional<Customer> findById(CustomerIdRequestDto request) {
         String sql = "SELECT " + CUSTOMER_COLUMNS
-                + " FROM clientes WHERE id = ?";
+                + " FROM customers WHERE id = ?";
 
         List<Customer> customers = queryCustomers(
                 sql,
@@ -54,7 +54,7 @@ public final class JdbcCustomerRepository implements CustomerRepository {
 
     @Override
     public Customer create(CustomerRequestDto request) {
-        String sql = "INSERT INTO clientes (nome, email, cidade, idade) "
+        String sql = "INSERT INTO customers (name, email, city, age) "
                 + "VALUES (?, ?, ?, ?) RETURNING id";
 
         long id = executeReturningId(sql, statement -> setCustomerParameters(statement, request));
@@ -64,7 +64,7 @@ public final class JdbcCustomerRepository implements CustomerRepository {
 
     @Override
     public boolean update(CustomerRequestDto request) {
-        String sql = "UPDATE clientes SET nome = ?, email = ?, cidade = ?, idade = ? "
+        String sql = "UPDATE customers SET name = ?, email = ?, city = ?, age = ? "
                 + "WHERE id = ?";
 
         int updatedRows = executeUpdate(sql, statement -> {
@@ -77,7 +77,7 @@ public final class JdbcCustomerRepository implements CustomerRepository {
 
     @Override
     public boolean delete(CustomerIdRequestDto request) {
-        String sql = "DELETE FROM clientes WHERE id = ?";
+        String sql = "DELETE FROM customers WHERE id = ?";
         int deletedRows = executeUpdate(sql, statement -> statement.setLong(1, request.id()));
         return deletedRows == 1;
     }
@@ -129,9 +129,9 @@ public final class JdbcCustomerRepository implements CustomerRepository {
     }
 
     private static String buildCursorQuery(String city) {
-        String cityClause = hasCityFilter(city) ? " AND cidade = ?" : "";
+        String cityClause = hasCityFilter(city) ? " AND city = ?" : "";
         return "SELECT " + CUSTOMER_COLUMNS
-                + " FROM clientes WHERE id > ?"
+                + " FROM customers WHERE id > ?"
                 + cityClause
                 + " ORDER BY id LIMIT ?";
     }
@@ -153,11 +153,11 @@ public final class JdbcCustomerRepository implements CustomerRepository {
     private static Customer mapRow(ResultSet result) throws SQLException {
         return new Customer(
                 result.getLong("id"),
-                result.getString("nome"),
+                result.getString("name"),
                 result.getString("email"),
-                result.getString("cidade"),
-                result.getInt("idade"),
-                result.getTimestamp("criado_em").toInstant().toString()
+                result.getString("city"),
+                result.getInt("age"),
+                result.getTimestamp("created_at").toInstant().toString()
         );
     }
 

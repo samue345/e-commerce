@@ -6,7 +6,3 @@ CREATE TABLE IF NOT EXISTS customers (
     age INTEGER NOT NULL CHECK (age BETWEEN 18 AND 120),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
--- Índice opcional para o experimento de comparação.
--- Execute apenas na etapa "com índice adicional":
--- CREATE INDEX idx_customers_city ON customers (city);

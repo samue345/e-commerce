@@ -54,7 +54,7 @@ def gerar_csv(total: int, seed: int, caminho: Path) -> None:
 
     with caminho.open("w", newline="", encoding="utf-8") as arquivo:
         escritor = csv.writer(arquivo)
-        escritor.writerow(["nome", "email", "cidade", "idade"])
+        escritor.writerow(["name", "email", "city", "age"])
 
         for numero in range(1, total + 1):
             nome = f"{rng.choice(NOMES)} {rng.choice(SOBRENOMES)}"

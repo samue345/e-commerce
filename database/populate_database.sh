@@ -27,8 +27,8 @@ docker exec "$CONTAINER" psql \
   -U "$USER" \
   -d "$DATABASE" \
   -v ON_ERROR_STOP=1 \
-  -c "TRUNCATE TABLE clientes RESTART IDENTITY;" \
-  -c "\\copy clientes (nome, email, cidade, idade) FROM '/tmp/clientes.csv' WITH (FORMAT csv, HEADER true);"
+  -c "TRUNCATE TABLE customers RESTART IDENTITY;" \
+  -c "\\copy customers (name, email, city, age) FROM '/tmp/clientes.csv' WITH (FORMAT csv, HEADER true);"
 
-TOTAL="$(docker exec "$CONTAINER" psql -U "$USER" -d "$DATABASE" -tAc 'SELECT COUNT(*) FROM clientes;')"
+TOTAL="$(docker exec "$CONTAINER" psql -U "$USER" -d "$DATABASE" -tAc 'SELECT COUNT(*) FROM customers;')"
 echo "Banco populado com ${TOTAL//[[:space:]]/} clientes."
