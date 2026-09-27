@@ -1,38 +1,35 @@
 package br.edu.crud.customer;
 
-import java.util.List;
-
 public final class CustomerController {
     private final CustomerService service;
+    private final CustomerMapper mapper;
 
-    public CustomerController(CustomerService service) {
+    public CustomerController(CustomerService service, CustomerMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     public CustomerResponseDto findById(long id) {
-        return CustomerResponseDto.from(service.findById(id));
+
+        return mapper.toResponse(service.findById(id));
     }
 
-    public CursorPage<CustomerResponseDto> list(CustomerListRequestDto request) {
-        return toResponse(service.cursorPage(request));
+    public CursorPage<CustomerResponseDto> list(CustomerListRequestDto request)
+    {
+        return mapper.toResponse(service.cursorPage(request));
     }
 
-    public CustomerResponseDto create(CustomerRequestDto request) {
-        return CustomerResponseDto.from(service.create(request));
+    public CustomerResponseDto create(CustomerRequestDto request)
+    {
+        return mapper.toResponse(service.create(request));
     }
 
     public CustomerResponseDto update(long id, CustomerRequestDto request) {
-        return CustomerResponseDto.from(service.update(id, request));
+        return mapper.toResponse(service.update(id, request));
     }
 
     public void delete(long id) {
         service.delete(id);
     }
 
-    private static CursorPage<CustomerResponseDto> toResponse(CursorPage<Customer> page) {
-        List<CustomerResponseDto> items = page.items().stream()
-                .map(CustomerResponseDto::from)
-                .toList();
-        return new CursorPage<>(items, page.nextCursor(), page.hasNext());
-    }
 }

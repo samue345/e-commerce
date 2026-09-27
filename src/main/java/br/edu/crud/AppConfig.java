@@ -1,6 +1,7 @@
 package br.edu.crud;
 
 import br.edu.crud.customer.CustomerController;
+import br.edu.crud.customer.CustomerMapper;
 import br.edu.crud.customer.CustomerRepository;
 import br.edu.crud.customer.CustomerService;
 import br.edu.crud.database.DatabaseConfig;
@@ -26,7 +27,8 @@ public final class AppConfig {
         HikariDataSource dataSource = databaseConfig.createDataSource();
         CustomerRepository repository = new CustomerRepository(dataSource);
         CustomerService service = new CustomerService(repository);
-        CustomerController controller = new CustomerController(service);
+        CustomerMapper mapper = new CustomerMapper();
+        CustomerController controller = new CustomerController(service, mapper);
 
         int port = Integer.parseInt(System.getenv().getOrDefault("APP_PORT", "8080"));
         return new AppConfig(port, dataSource, controller);
