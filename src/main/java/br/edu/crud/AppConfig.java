@@ -7,6 +7,7 @@ import br.edu.crud.customer.dto.CustomerRequestDto;
 import br.edu.crud.customer.exception.CustomerNotFoundException;
 import br.edu.crud.customer.mapper.CustomerMapper;
 import br.edu.crud.customer.repository.CustomerRepository;
+import br.edu.crud.customer.repository.JdbcCustomerRepository;
 import br.edu.crud.customer.service.CustomerService;
 import br.edu.crud.database.DatabaseConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -29,7 +30,7 @@ public final class AppConfig {
     public static AppConfig fromEnvironment() {
         DatabaseConfig databaseConfig = DatabaseConfig.fromEnvironment();
         HikariDataSource dataSource = databaseConfig.createDataSource();
-        CustomerRepository repository = new CustomerRepository(dataSource);
+        CustomerRepository repository = new JdbcCustomerRepository(dataSource);
         CustomerService service = new CustomerService(repository);
         CustomerMapper mapper = new CustomerMapper();
         CustomerController controller = new CustomerController(service, mapper);
