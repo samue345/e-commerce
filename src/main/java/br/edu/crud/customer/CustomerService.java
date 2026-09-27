@@ -39,13 +39,11 @@ public final class CustomerService {
     public SimplePage<Customer> simplePage(String city, int page, int size) {
         int safePage = Math.max(page, 1);
         int safeSize = Math.min(Math.max(size, 1), 100);
-        long total = repository.count(city);
-        int totalPages = (int) Math.ceil((double) total / safeSize);
         int offset = (safePage - 1) * safeSize;
-        List<Customer> customers = offset >= total
-                ? List.of()
-                : repository.findPage(city, offset, safeSize);
-        return new SimplePage<>(customers, safePage, safeSize, total, totalPages);
+        List<Customer> customers = repository.findPage(city, offset, safeSize + 1);
+        boolean hasNext = customers.size() > safeSize;
+        if (hasNext) customers = customers.subList(0, safeSize);
+        return new SimplePage<>(customers, safePage, safeSize, hasNext);
     }
 
     public Customer create(CustomerRequestDto request) {

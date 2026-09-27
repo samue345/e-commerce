@@ -26,7 +26,10 @@ Traditional page pagination is also available:
 GET /clientes?page=2&size=20
 ```
 
-The response contains `items`, `page`, `size`, `total`, and `totalPages`.
+The response contains `items`, `page`, `size`, and `hasNext`.
+
+The simple pagination does not execute `COUNT(*)`; it fetches one extra row to
+calculate `hasNext`.
 
 ## Run one scenario
 

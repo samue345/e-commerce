@@ -92,6 +92,6 @@ public final class CustomerController {
         List<CustomerResponseDto> items = page.items().stream()
                 .map(CustomerResponseDto::from)
                 .toList();
-        return new SimplePage<>(items, page.page(), page.size(), page.total(), page.totalPages());
+        return new SimplePage<>(items, page.page(), page.size(), page.hasNext());
     }
 }
