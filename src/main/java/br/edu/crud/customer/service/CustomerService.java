@@ -24,7 +24,7 @@ public final class CustomerService {
         return repository.findByCity(city, Math.min(Math.max(limit, 1), 100));
     }
 
-    public CursorPage<Customer> cursorPage(CustomerListRequestDto request)
+    public CursorPage<Customer> list(CustomerListRequestDto request)
     {
         CustomerListRequestDto query = request.sanitize();
         List<Customer> customers = repository.findAfterId(
@@ -38,14 +38,19 @@ public final class CustomerService {
 
     public Customer update(CustomerRequestDto request) {
         CustomerRequestDto updateRequest = request.prepareForUpdate();
+
         if (!repository.update(updateRequest.id(), updateRequest)) {
             throw new CustomerNotFoundException(updateRequest.id());
         }
+
         return findById(updateRequest.id());
     }
 
-    public void delete(long id) {
-        if (!repository.delete(id)) throw new CustomerNotFoundException(id);
+    public void delete(long id)
+    {
+        if (!repository.delete(id)){
+            throw new CustomerNotFoundException(id);
+        }
     }
 
 }

@@ -26,7 +26,7 @@ public final class CustomerController
 
     public CursorPage<CustomerResponseDto> list(CustomerListRequestDto request)
     {
-        return mapper.toResponse(service.cursorPage(request));
+        return mapper.toResponse(service.list(request));
     }
 
     public CustomerResponseDto create(CustomerRequestDto request)
