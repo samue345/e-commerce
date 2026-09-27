@@ -170,9 +170,6 @@ Execute os comandos a partir da raiz do projeto.
 docker compose up -d --build
 ```
 
-O Docker Compose inicia os containers, mas a população do banco é feita por um
-script separado. Essa separação deixa cada script responsável por uma tarefa.
-
 Esse comando inicia:
 
 - um PostgreSQL;
