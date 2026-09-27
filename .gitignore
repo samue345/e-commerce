@@ -4,3 +4,4 @@ target/
 database/data/*.csv
 *.log
 .DS_Store
+load-tests/results/
