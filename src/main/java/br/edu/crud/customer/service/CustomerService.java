@@ -20,10 +20,6 @@ public final class CustomerService {
         return repository.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
     }
 
-    public List<Customer> findByCity(String city, int limit) {
-        return repository.findByCity(city, Math.min(Math.max(limit, 1), 100));
-    }
-
     public CursorPage<Customer> list(CustomerListRequestDto request)
     {
         CustomerListRequestDto query = request.sanitize();

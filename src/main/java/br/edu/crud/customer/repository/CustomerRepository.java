@@ -32,23 +32,6 @@ public final class CustomerRepository {
         }
     }
 
-    public List<Customer> findByCity(String city, int limit) {
-        String sql = "SELECT id, nome, email, cidade, idade, criado_em "
-                + "FROM clientes WHERE cidade = ? ORDER BY id LIMIT ?";
-        try (var connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, city);
-            statement.setInt(2, limit);
-            try (ResultSet result = statement.executeQuery()) {
-                List<Customer> customers = new ArrayList<>();
-                while (result.next()) customers.add(mapRow(result));
-                return customers;
-            }
-        } catch (SQLException exception) {
-            throw new IllegalStateException("Error listing customers", exception);
-        }
-    }
-
     public List<Customer> findAfterId(String city, long cursor, int limit) {
         String sql = "SELECT id, nome, email, cidade, idade, criado_em FROM clientes "
                 + "WHERE id > ?" + (city == null || city.isBlank() ? "" : " AND cidade = ?")
