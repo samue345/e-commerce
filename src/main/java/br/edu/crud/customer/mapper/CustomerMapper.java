@@ -1,4 +1,8 @@
-package br.edu.crud.customer;
+package br.edu.crud.customer.mapper;
+
+import br.edu.crud.customer.dto.CursorPage;
+import br.edu.crud.customer.dto.CustomerResponseDto;
+import br.edu.crud.customer.model.Customer;
 
 import java.util.List;
 

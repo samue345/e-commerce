@@ -1,6 +1,16 @@
-package br.edu.crud.customer;
+package br.edu.crud.customer.controller;
 
-public final class CustomerController {
+import br.edu.crud.customer.dto.CursorPage;
+import br.edu.crud.customer.dto.CustomerIdRequestDto;
+import br.edu.crud.customer.dto.CustomerListRequestDto;
+import br.edu.crud.customer.dto.CustomerRequestDto;
+import br.edu.crud.customer.dto.CustomerResponseDto;
+import br.edu.crud.customer.mapper.CustomerMapper;
+import br.edu.crud.customer.model.Customer;
+import br.edu.crud.customer.service.CustomerService;
+
+public final class CustomerController
+{
     private final CustomerService service;
     private final CustomerMapper mapper;
 

@@ -1,4 +1,7 @@
-package br.edu.crud.customer;
+package br.edu.crud.customer.repository;
+
+import br.edu.crud.customer.dto.CustomerRequestDto;
+import br.edu.crud.customer.model.Customer;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;

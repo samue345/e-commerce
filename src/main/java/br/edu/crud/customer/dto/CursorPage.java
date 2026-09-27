@@ -1,4 +1,4 @@
-package br.edu.crud.customer;
+package br.edu.crud.customer.dto;
 
 import java.util.List;
 

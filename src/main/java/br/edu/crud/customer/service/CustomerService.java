@@ -1,4 +1,11 @@
-package br.edu.crud.customer;
+package br.edu.crud.customer.service;
+
+import br.edu.crud.customer.dto.CursorPage;
+import br.edu.crud.customer.dto.CustomerListRequestDto;
+import br.edu.crud.customer.dto.CustomerRequestDto;
+import br.edu.crud.customer.exception.CustomerNotFoundException;
+import br.edu.crud.customer.model.Customer;
+import br.edu.crud.customer.repository.CustomerRepository;
 
 import java.util.List;
 

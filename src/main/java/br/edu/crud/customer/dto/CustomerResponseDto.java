@@ -1,4 +1,6 @@
-package br.edu.crud.customer;
+package br.edu.crud.customer.dto;
+
+import br.edu.crud.customer.model.Customer;
 
 public record CustomerResponseDto(Long id, String name, String email, String city,
                                   Integer age, String createdAt) {

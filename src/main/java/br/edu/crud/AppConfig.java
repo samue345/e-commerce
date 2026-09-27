@@ -1,9 +1,13 @@
 package br.edu.crud;
 
-import br.edu.crud.customer.CustomerController;
-import br.edu.crud.customer.CustomerMapper;
-import br.edu.crud.customer.CustomerRepository;
-import br.edu.crud.customer.CustomerService;
+import br.edu.crud.customer.controller.CustomerController;
+import br.edu.crud.customer.dto.CustomerIdRequestDto;
+import br.edu.crud.customer.dto.CustomerListRequestDto;
+import br.edu.crud.customer.dto.CustomerRequestDto;
+import br.edu.crud.customer.exception.CustomerNotFoundException;
+import br.edu.crud.customer.mapper.CustomerMapper;
+import br.edu.crud.customer.repository.CustomerRepository;
+import br.edu.crud.customer.service.CustomerService;
 import br.edu.crud.database.DatabaseConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.javalin.Javalin;
@@ -38,21 +42,21 @@ public final class AppConfig {
         return Javalin.create()
                 .get("/health", ctx -> ctx.json(java.util.Map.of("status", "UP")))
                 .get("/clientes/{id}", ctx -> ctx.json(customerController.findById(
-                        new br.edu.crud.customer.CustomerIdRequestDto(
+                        new CustomerIdRequestDto(
                                 Long.parseLong(ctx.pathParam("id"))))))
                 .get("/clientes", ctx -> ctx.json(customerController.list(
-                        br.edu.crud.customer.CustomerListRequestDto.from(ctx))))
+                        CustomerListRequestDto.from(ctx))))
                 .post("/clientes", ctx -> ctx.status(HttpStatus.CREATED).json(
                         customerController.create(ctx.bodyAsClass(
-                                br.edu.crud.customer.CustomerRequestDto.class))))
+                                CustomerRequestDto.class))))
                 .put("/clientes", ctx -> ctx.json(customerController.update(
-                        ctx.bodyAsClass(br.edu.crud.customer.CustomerRequestDto.class))))
+                        ctx.bodyAsClass(CustomerRequestDto.class))))
                 .delete("/clientes/{id}", ctx -> {
-                    customerController.delete(new br.edu.crud.customer.CustomerIdRequestDto(
+                    customerController.delete(new CustomerIdRequestDto(
                             Long.parseLong(ctx.pathParam("id"))));
                     ctx.status(HttpStatus.NO_CONTENT);
                 })
-                .exception(br.edu.crud.customer.CustomerNotFoundException.class, (exception, ctx) ->
+                .exception(CustomerNotFoundException.class, (exception, ctx) ->
                         ctx.status(HttpStatus.NOT_FOUND).json(java.util.Map.of(
                                 "error", exception.getMessage())))
                 .exception(IllegalArgumentException.class, (exception, ctx) ->
