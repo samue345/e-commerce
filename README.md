@@ -124,8 +124,7 @@ Cliente ou Apache JMeter
 - **Python**: gera um dataset local e reproduzível.
 - **Apache JMeter**: simula vários clientes e mede o desempenho.
 
-As duas instâncias Java são stateless. Isso significa que elas não guardam
-dados localmente: as duas usam o mesmo PostgreSQL.
+As duas instâncias Java são stateless. 
 
 ## 3. Organização do projeto
 
