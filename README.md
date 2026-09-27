@@ -77,7 +77,7 @@ possui somente o índice automático criado pelo PostgreSQL para a chave
 primária `id`.
 
 O índice em `city` apresentado mais adiante neste documento é apenas uma
-possibilidade para o experimento. Ele ainda não foi criado e deve ser avaliado na etapa de desempenho.
+possibilidade para o experimento. Ele ainda não foi criado e deve ser avaliado na etapa de desempenhom, então é preciso olhar o código e analisar as querys no banco.
 
 ## 1. O que o projeto faz
 
