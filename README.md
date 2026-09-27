@@ -418,33 +418,24 @@ curl -i -X DELETE http://localhost:8080/clientes/1
 
 Em caso de sucesso, a API retorna `204 No Content`.
 
-## 8. Como o Apache JMeter funciona neste projeto
+## 8. O que o Apache JMeter faz neste projeto
 
-O Apache JMeter é uma ferramenta para teste de carga. Ele cria usuários
-virtuais, envia requisições para a aplicação e registra informações como:
-
-- quantidade de requisições;
-- tempo de resposta;
-- requisições por segundo;
-- quantidade de erros;
-- percentis, como o p95.
-
-Neste projeto, o JMeter está na pasta `load-tests` para que os experimentos
-sejam reproduzíveis. Ele não substitui a aplicação e não acessa o PostgreSQL
-diretamente. O caminho testado é:
+Neste projeto, o JMeter é usado somente como cliente externo da API. Ele não
+fica dentro dos containers, não acessa o PostgreSQL diretamente e não altera a
+arquitetura da aplicação. O caminho das requisições é:
 
 ```text
 JMeter -> Nginx -> app-1 ou app-2 -> PostgreSQL
 ```
 
-### O que existe no plano JMeter
+### Configuração existente no projeto
 
-O arquivo `load-tests/clientes-crud.jmx` possui dois grupos de usuários:
+O arquivo `load-tests/clientes-crud.jmx` representa dois grupos de requisições:
 
-- **Readers**: fazem `GET /clientes/{id}`;
-- **Writers**: fazem `POST /clientes`.
+- **Readers**: enviam requisições `GET /clientes/{id}` para ler clientes;
+- **Writers**: enviam requisições `POST /clientes` para inserir clientes.
 
-Por padrão, o plano usa:
+Por padrão, esse arquivo está preparado para:
 
 - 50 usuários virtuais leitores;
 - 50 usuários virtuais escritores;
@@ -453,9 +444,14 @@ Por padrão, o plano usa:
 - duração de 60 segundos;
 - aumento gradual dos usuários durante 5 segundos.
 
-Cada usuário virtual executa repetidamente a operação do seu grupo durante o
-tempo configurado. Os e-mails enviados pelos escritores são gerados de forma
-única para evitar conflito com os dados existentes.
+Cada grupo repete sua operação durante o tempo configurado. Os dados enviados
+pelas requisições de escrita usam e-mails únicos, evitando conflitos com os
+registros já existentes.
+
+O script `load-tests/run-scenarios.sh` apenas executa o mesmo plano três vezes,
+alterando a quantidade de leitores e escritores para representar os cenários
+do trabalho. Ele não cria índices, não altera o código Java e não gera os
+resultados antes de ser executado.
 
 ### Cenários do trabalho
 
@@ -483,7 +479,7 @@ jmeter -n \
   -o load-tests/results/scenario-a-report
 ```
 
-Explicação das opções principais:
+Parâmetros usados neste projeto:
 
 - `-n`: executa sem abrir a interface gráfica;
 - `-t`: indica o arquivo do plano de teste;
@@ -526,7 +522,7 @@ CREATE INDEX idx_customers_city ON customers (city);
 A comparação recomendada para o trabalho é:
 
 1. executar o teste sem o índice adicional;
-2. criar o índice em `city`;
+2. criar o índice em `city`, porém vocês podem criar outros se acharem necessario;
 3. executar o mesmo teste novamente;
 4. comparar tempo de resposta, throughput e erros.
 
