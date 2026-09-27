@@ -9,6 +9,25 @@ The plan contains two standard JMeter thread groups:
 - `Readers`: `GET /clientes/{id}`;
 - `Writers`: `POST /clientes` with a unique generated email.
 
+## Pagination endpoints
+
+The customer list supports cursor pagination by default:
+
+```text
+GET /clientes?limit=20
+GET /clientes?cursor=73&limit=20
+```
+
+The response contains `items`, `nextCursor`, and `hasNext`.
+
+Traditional page pagination is also available:
+
+```text
+GET /clientes?page=2&size=20
+```
+
+The response contains `items`, `page`, `size`, `total`, and `totalPages`.
+
 ## Run one scenario
 
 From WSL, with Docker services running:

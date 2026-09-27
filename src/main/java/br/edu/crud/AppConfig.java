@@ -35,7 +35,7 @@ public final class AppConfig {
         return Javalin.create()
                 .get("/health", ctx -> ctx.json(java.util.Map.of("status", "UP")))
                 .get("/clientes/{id}", customerController::findById)
-                .get("/clientes", customerController::findByCity)
+                .get("/clientes", customerController::list)
                 .post("/clientes", customerController::create)
                 .put("/clientes/{id}", customerController::update)
                 .delete("/clientes/{id}", customerController::delete)
