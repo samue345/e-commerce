@@ -41,9 +41,6 @@ quanto a leituras e escritas.
 - ❌ Considerar a entrega atrasada até **5 de outubro de 2026**, com desconto
   de um ponto por dia de atraso, caso seja necessário.
 
-Esta especificação foi incluída no README para separar claramente o que já foi
-implementado daquilo que ainda precisa ser medido no experimento.
-
 ## Status do trabalho
 
 O código da aplicação e a infraestrutura foram implementados, mas a avaliação
