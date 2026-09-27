@@ -27,14 +27,8 @@ public final class CustomerController {
 
     public void list(Context context)
     {
-        String city = context.queryParam("cidade");
-        String limitParam = context.queryParam("limit");
-
-        int limit = Integer.parseInt(limitParam == null ? "20" : limitParam);
-        String cursorParam = context.queryParam("cursor");
-        Long cursor = cursorParam == null || cursorParam.isBlank()
-                ? null : Long.parseLong(cursorParam);
-        context.json(toResponse(service.cursorPage(city, cursor, limit)));
+        CustomerListRequestDto request = CustomerListRequestDto.from(context);
+        context.json(toResponse(service.cursorPage(request)));
     }
 
     public void create(Context context)

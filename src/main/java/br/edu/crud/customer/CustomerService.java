@@ -17,10 +17,10 @@ public final class CustomerService {
         return repository.findByCity(city, Math.min(Math.max(limit, 1), 100));
     }
 
-    public CursorPage<Customer> cursorPage(String city, Long cursor, int limit) {
-        int safeLimit = Math.min(Math.max(limit, 1), 100);
-        long currentCursor = cursor == null ? 0 : Math.max(cursor, 0);
-        List<Customer> customers = repository.findAfterId(city, currentCursor, safeLimit + 1);
+    public CursorPage<Customer> cursorPage(CustomerListRequestDto request) {
+        int safeLimit = Math.min(Math.max(request.limit(), 1), 100);
+        long currentCursor = request.cursor() == null ? 0 : Math.max(request.cursor(), 0);
+        List<Customer> customers = repository.findAfterId(request.city(), currentCursor, safeLimit + 1);
         boolean hasNext = customers.size() > safeLimit;
         if (hasNext) customers = customers.subList(0, safeLimit);
         Long nextCursor = hasNext && !customers.isEmpty()
