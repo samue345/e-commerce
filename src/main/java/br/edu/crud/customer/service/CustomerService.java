@@ -25,8 +25,7 @@ public final class CustomerService {
     public CursorPage<Customer> list(CustomerListRequestDto request)
     {
         CustomerListRequestDto query = request.sanitize();
-        List<Customer> customers = repository.findAfterId(
-                query.city(), query.cursorValue(), query.fetchLimit());
+        List<Customer> customers = repository.findAfter(query);
         return CursorPage.from(customers, query.limit(), Customer::id);
     }
 

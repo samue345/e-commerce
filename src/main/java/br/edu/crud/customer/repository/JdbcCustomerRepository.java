@@ -2,6 +2,7 @@ package br.edu.crud.customer.repository;
 
 import br.edu.crud.customer.dto.CustomerRequestDto;
 import br.edu.crud.customer.dto.CustomerIdRequestDto;
+import br.edu.crud.customer.dto.CustomerListRequestDto;
 import br.edu.crud.customer.model.Customer;
 
 import javax.sql.DataSource;
@@ -36,18 +37,18 @@ public final class JdbcCustomerRepository implements CustomerRepository {
     }
 
     @Override
-    public List<Customer> findAfterId(String city, long cursor, int limit) {
-        String sql = buildCursorQuery(city);
+    public List<Customer> findAfter(CustomerListRequestDto request) {
+        String sql = buildCursorQuery(request.city());
 
         return queryCustomers(sql, statement -> {
             int parameter = 1;
-            statement.setLong(parameter++, cursor);
+            statement.setLong(parameter++, request.cursorValue());
 
-            if (hasCityFilter(city)) {
-                statement.setString(parameter++, city);
+            if (hasCityFilter(request.city())) {
+                statement.setString(parameter++, request.city());
             }
 
-            statement.setInt(parameter, limit);
+            statement.setInt(parameter, request.fetchLimit());
         });
     }
 
