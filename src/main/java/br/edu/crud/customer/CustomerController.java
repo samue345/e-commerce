@@ -3,7 +3,10 @@ package br.edu.crud.customer;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 
+import java.util.List;
+
 public final class CustomerController {
+    
     private final CustomerService service;
 
     public CustomerController(CustomerService service) {
@@ -13,7 +16,8 @@ public final class CustomerController {
     public void findById(Context context)
     {
         try {
-            context.json(service.findById(Long.parseLong(context.pathParam("id"))));
+            context.json(CustomerResponseDto.from(
+                    service.findById(Long.parseLong(context.pathParam("id")))));
         }
         catch (CustomerNotFoundException exception)
         {
@@ -30,20 +34,21 @@ public final class CustomerController {
         if (pageParam != null) {
             String sizeParam = context.queryParam("size");
             int size = Integer.parseInt(sizeParam == null ? "20" : sizeParam);
-            context.json(service.simplePage(city, Integer.parseInt(pageParam), size));
+            context.json(toResponse(service.simplePage(city, Integer.parseInt(pageParam), size)));
             return;
         }
 
         String cursorParam = context.queryParam("cursor");
         Long cursor = cursorParam == null || cursorParam.isBlank()
                 ? null : Long.parseLong(cursorParam);
-        context.json(service.cursorPage(city, cursor, limit));
+        context.json(toResponse(service.cursorPage(city, cursor, limit)));
     }
 
     public void create(Context context)
     {
         try {
-            context.status(HttpStatus.CREATED).json(service.create(context.bodyAsClass(CustomerRequest.class)));
+            context.status(HttpStatus.CREATED).json(CustomerResponseDto.from(
+                    service.create(context.bodyAsClass(CustomerRequestDto.class))));
         }
         catch (IllegalArgumentException exception) {
             context.status(HttpStatus.BAD_REQUEST).json(java.util.Map.of("error", exception.getMessage()));
@@ -54,7 +59,8 @@ public final class CustomerController {
     {
         try {
             long id = Long.parseLong(context.pathParam("id"));
-            context.json(service.update(id, context.bodyAsClass(CustomerRequest.class)));
+            context.json(CustomerResponseDto.from(
+                    service.update(id, context.bodyAsClass(CustomerRequestDto.class))));
         }
         catch (CustomerNotFoundException exception) {
             context.status(HttpStatus.NOT_FOUND).json(java.util.Map.of("error", exception.getMessage()));
@@ -73,5 +79,19 @@ public final class CustomerController {
         catch (CustomerNotFoundException exception) {
             context.status(HttpStatus.NOT_FOUND).json(java.util.Map.of("error", exception.getMessage()));
         }
+    }
+
+    private static CursorPage<CustomerResponseDto> toResponse(CursorPage<Customer> page) {
+        List<CustomerResponseDto> items = page.items().stream()
+                .map(CustomerResponseDto::from)
+                .toList();
+        return new CursorPage<>(items, page.nextCursor(), page.hasNext());
+    }
+
+    private static SimplePage<CustomerResponseDto> toResponse(SimplePage<Customer> page) {
+        List<CustomerResponseDto> items = page.items().stream()
+                .map(CustomerResponseDto::from)
+                .toList();
+        return new SimplePage<>(items, page.page(), page.size(), page.total(), page.totalPages());
     }
 }

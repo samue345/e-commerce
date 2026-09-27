@@ -48,14 +48,14 @@ public final class CustomerService {
         return new SimplePage<>(customers, safePage, safeSize, total, totalPages);
     }
 
-    public Customer create(CustomerRequest request) {
-        validate(request);
-        return repository.create(request);
+    public Customer create(CustomerRequestDto request) {
+        CustomerRequestDto sanitizedRequest = sanitizeAndValidate(request);
+        return repository.create(sanitizedRequest);
     }
 
-    public Customer update(long id, CustomerRequest request) {
-        validate(request);
-        if (!repository.update(id, request)) throw new CustomerNotFoundException(id);
+    public Customer update(long id, CustomerRequestDto request) {
+        CustomerRequestDto sanitizedRequest = sanitizeAndValidate(request);
+        if (!repository.update(id, sanitizedRequest)) throw new CustomerNotFoundException(id);
         return findById(id);
     }
 
@@ -63,12 +63,15 @@ public final class CustomerService {
         if (!repository.delete(id)) throw new CustomerNotFoundException(id);
     }
 
-    private static void validate(CustomerRequest request) {
-        if (request == null || request.name() == null || request.name().isBlank()
-                || request.email() == null || request.email().isBlank()
-                || request.city() == null || request.city().isBlank()
-                || request.age() == null || request.age() < 18 || request.age() > 120) {
+    private static CustomerRequestDto sanitizeAndValidate(CustomerRequestDto request) {
+        CustomerRequestDto sanitized = request == null ? null : request.sanitize();
+        if (sanitized == null || sanitized.name() == null || sanitized.name().isBlank()
+                || sanitized.email() == null || sanitized.email().isBlank()
+                || !sanitized.email().matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
+                || sanitized.city() == null || sanitized.city().isBlank()
+                || sanitized.age() == null || sanitized.age() < 18 || sanitized.age() > 120) {
             throw new IllegalArgumentException("Invalid customer data");
         }
+        return sanitized;
     }
 }

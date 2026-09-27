@@ -117,7 +117,7 @@ public final class CustomerRepository {
         }
     }
 
-    public Customer create(CustomerRequest request) {
+    public Customer create(CustomerRequestDto request) {
         String sql = "INSERT INTO clientes (nome, email, cidade, idade) VALUES (?, ?, ?, ?)";
         try (var connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -132,7 +132,7 @@ public final class CustomerRepository {
         }
     }
 
-    public boolean update(long id, CustomerRequest request) {
+    public boolean update(long id, CustomerRequestDto request) {
         String sql = "UPDATE clientes SET nome = ?, email = ?, cidade = ?, idade = ? WHERE id = ?";
         try (var connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -154,7 +154,7 @@ public final class CustomerRepository {
         }
     }
 
-    private static void setParameters(PreparedStatement statement, CustomerRequest request) throws SQLException {
+    private static void setParameters(PreparedStatement statement, CustomerRequestDto request) throws SQLException {
         statement.setString(1, request.name());
         statement.setString(2, request.email());
         statement.setString(3, request.city());
