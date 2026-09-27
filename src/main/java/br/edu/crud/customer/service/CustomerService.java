@@ -2,6 +2,7 @@ package br.edu.crud.customer.service;
 
 import br.edu.crud.customer.dto.CursorPage;
 import br.edu.crud.customer.dto.CustomerListRequestDto;
+import br.edu.crud.customer.dto.CustomerIdRequestDto;
 import br.edu.crud.customer.dto.CustomerRequestDto;
 import br.edu.crud.customer.exception.CustomerNotFoundException;
 import br.edu.crud.customer.model.Customer;
@@ -16,8 +17,9 @@ public final class CustomerService {
         this.repository = repository;
     }
 
-    public Customer findById(long id) {
-        return repository.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
+    public Customer findById(CustomerIdRequestDto request) {
+        return repository.findById(request)
+                .orElseThrow(() -> new CustomerNotFoundException(request.id()));
     }
 
     public CursorPage<Customer> list(CustomerListRequestDto request)
@@ -35,17 +37,17 @@ public final class CustomerService {
     public Customer update(CustomerRequestDto request) {
         CustomerRequestDto updateRequest = request.prepareForUpdate();
 
-        if (!repository.update(updateRequest.id(), updateRequest)) {
+        if (!repository.update(updateRequest)) {
             throw new CustomerNotFoundException(updateRequest.id());
         }
 
-        return findById(updateRequest.id());
+        return findById(new CustomerIdRequestDto(updateRequest.id()));
     }
 
-    public void delete(long id)
+    public void delete(CustomerIdRequestDto request)
     {
-        if (!repository.delete(id)){
-            throw new CustomerNotFoundException(id);
+        if (!repository.delete(request)){
+            throw new CustomerNotFoundException(request.id());
         }
     }
 

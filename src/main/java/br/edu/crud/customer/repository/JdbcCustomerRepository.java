@@ -1,6 +1,7 @@
 package br.edu.crud.customer.repository;
 
 import br.edu.crud.customer.dto.CustomerRequestDto;
+import br.edu.crud.customer.dto.CustomerIdRequestDto;
 import br.edu.crud.customer.model.Customer;
 
 import javax.sql.DataSource;
@@ -22,13 +23,13 @@ public final class JdbcCustomerRepository implements CustomerRepository {
     }
 
     @Override
-    public Optional<Customer> findById(long id) {
+    public Optional<Customer> findById(CustomerIdRequestDto request) {
         String sql = "SELECT " + CUSTOMER_COLUMNS
                 + " FROM clientes WHERE id = ?";
 
         List<Customer> customers = queryCustomers(
                 sql,
-                statement -> statement.setLong(1, id)
+                statement -> statement.setLong(1, request.id())
         );
 
         return customers.stream().findFirst();
@@ -56,26 +57,27 @@ public final class JdbcCustomerRepository implements CustomerRepository {
                 + "VALUES (?, ?, ?, ?) RETURNING id";
 
         long id = executeReturningId(sql, statement -> setCustomerParameters(statement, request));
-        return findById(id).orElseThrow(() -> new IllegalStateException("Created customer was not found"));
+        return findById(new CustomerIdRequestDto(id))
+                .orElseThrow(() -> new IllegalStateException("Created customer was not found"));
     }
 
     @Override
-    public boolean update(long id, CustomerRequestDto request) {
+    public boolean update(CustomerRequestDto request) {
         String sql = "UPDATE clientes SET nome = ?, email = ?, cidade = ?, idade = ? "
                 + "WHERE id = ?";
 
         int updatedRows = executeUpdate(sql, statement -> {
             setCustomerParameters(statement, request);
-            statement.setLong(5, id);
+            statement.setLong(5, request.id());
         });
 
         return updatedRows == 1;
     }
 
     @Override
-    public boolean delete(long id) {
+    public boolean delete(CustomerIdRequestDto request) {
         String sql = "DELETE FROM clientes WHERE id = ?";
-        int deletedRows = executeUpdate(sql, statement -> statement.setLong(1, id));
+        int deletedRows = executeUpdate(sql, statement -> statement.setLong(1, request.id()));
         return deletedRows == 1;
     }
 

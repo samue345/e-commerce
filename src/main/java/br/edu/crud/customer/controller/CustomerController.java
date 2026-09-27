@@ -21,7 +21,7 @@ public final class CustomerController
 
     public CustomerResponseDto findById(CustomerIdRequestDto request) {
 
-        return mapper.toResponse(service.findById(request.id()));
+        return mapper.toResponse(service.findById(request));
     }
 
     public CursorPage<CustomerResponseDto> list(CustomerListRequestDto request)
@@ -40,7 +40,7 @@ public final class CustomerController
     }
 
     public void delete(CustomerIdRequestDto request) {
-        service.delete(request.id());
+        service.delete(request);
     }
 
 }

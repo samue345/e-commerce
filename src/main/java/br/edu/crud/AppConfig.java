@@ -14,7 +14,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.javalin.Javalin;
 import io.javalin.http.HttpStatus;
 
-/** Composição central da aplicação: instancia e conecta todas as dependências. */
 public final class AppConfig {
     private final int httpPort;
     private final HikariDataSource dataSource;
