@@ -91,9 +91,6 @@ A aplicação permite:
 - atualizar um cliente;
 - remover um cliente.
 
-Os nomes de classes, métodos, tabelas e colunas do código estão em inglês.
-As explicações deste documento estão em português.
-
 ## 2. Arquitetura
 
 O fluxo de uma requisição é:
