@@ -17,13 +17,6 @@ public final class CustomerService {
         return repository.findByCity(city, Math.min(Math.max(limit, 1), 100));
     }
 
-    public List<Customer> list(String city, int limit) {
-        int safeLimit = Math.min(Math.max(limit, 1), 100);
-        return city == null || city.isBlank()
-                ? repository.findAll(safeLimit)
-                : repository.findByCity(city, safeLimit);
-    }
-
     public CursorPage<Customer> cursorPage(String city, Long cursor, int limit) {
         int safeLimit = Math.min(Math.max(limit, 1), 100);
         long currentCursor = cursor == null ? 0 : Math.max(cursor, 0);
@@ -34,16 +27,6 @@ public final class CustomerService {
                 ? customers.get(customers.size() - 1).id()
                 : null;
         return new CursorPage<>(customers, nextCursor, hasNext);
-    }
-
-    public SimplePage<Customer> simplePage(String city, int page, int size) {
-        int safePage = Math.max(page, 1);
-        int safeSize = Math.min(Math.max(size, 1), 100);
-        int offset = (safePage - 1) * safeSize;
-        List<Customer> customers = repository.findPage(city, offset, safeSize + 1);
-        boolean hasNext = customers.size() > safeSize;
-        if (hasNext) customers = customers.subList(0, safeSize);
-        return new SimplePage<>(customers, safePage, safeSize, hasNext);
     }
 
     public Customer create(CustomerRequestDto request) {

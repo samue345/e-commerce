@@ -46,22 +46,6 @@ public final class CustomerRepository {
         }
     }
 
-    public List<Customer> findAll(int limit) {
-        String sql = "SELECT id, nome, email, cidade, idade, criado_em "
-                + "FROM clientes ORDER BY id LIMIT ?";
-        try (var connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, limit);
-            try (ResultSet result = statement.executeQuery()) {
-                List<Customer> customers = new ArrayList<>();
-                while (result.next()) customers.add(mapRow(result));
-                return customers;
-            }
-        } catch (SQLException exception) {
-            throw new IllegalStateException("Error listing all customers", exception);
-        }
-    }
-
     public List<Customer> findAfterId(String city, long cursor, int limit) {
         String sql = "SELECT id, nome, email, cidade, idade, criado_em FROM clientes "
                 + "WHERE id > ?" + (city == null || city.isBlank() ? "" : " AND cidade = ?")
@@ -79,41 +63,6 @@ public final class CustomerRepository {
             }
         } catch (SQLException exception) {
             throw new IllegalStateException("Error finding customers after cursor", exception);
-        }
-    }
-
-    public List<Customer> findPage(String city, int offset, int limit) {
-        String sql = "SELECT id, nome, email, cidade, idade, criado_em FROM clientes"
-                + (city == null || city.isBlank() ? "" : " WHERE cidade = ?")
-                + " ORDER BY id LIMIT ? OFFSET ?";
-        try (var connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            int parameter = 1;
-            if (city != null && !city.isBlank()) statement.setString(parameter++, city);
-            statement.setInt(parameter++, limit);
-            statement.setInt(parameter, offset);
-            try (ResultSet result = statement.executeQuery()) {
-                List<Customer> customers = new ArrayList<>();
-                while (result.next()) customers.add(mapRow(result));
-                return customers;
-            }
-        } catch (SQLException exception) {
-            throw new IllegalStateException("Error finding customer page", exception);
-        }
-    }
-
-    public long count(String city) {
-        String sql = "SELECT COUNT(*) FROM clientes" +
-                (city == null || city.isBlank() ? "" : " WHERE cidade = ?");
-        try (var connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            if (city != null && !city.isBlank()) statement.setString(1, city);
-            try (ResultSet result = statement.executeQuery()) {
-                result.next();
-                return result.getLong(1);
-            }
-        } catch (SQLException exception) {
-            throw new IllegalStateException("Error counting customers", exception);
         }
     }
 

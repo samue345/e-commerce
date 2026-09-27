@@ -25,19 +25,12 @@ public final class CustomerController {
         }
     }
 
-    public void list(Context context) {
+    public void list(Context context)
+    {
         String city = context.queryParam("cidade");
         String limitParam = context.queryParam("limit");
+
         int limit = Integer.parseInt(limitParam == null ? "20" : limitParam);
-        String pageParam = context.queryParam("page");
-
-        if (pageParam != null) {
-            String sizeParam = context.queryParam("size");
-            int size = Integer.parseInt(sizeParam == null ? "20" : sizeParam);
-            context.json(toResponse(service.simplePage(city, Integer.parseInt(pageParam), size)));
-            return;
-        }
-
         String cursorParam = context.queryParam("cursor");
         Long cursor = cursorParam == null || cursorParam.isBlank()
                 ? null : Long.parseLong(cursorParam);
@@ -88,10 +81,4 @@ public final class CustomerController {
         return new CursorPage<>(items, page.nextCursor(), page.hasNext());
     }
 
-    private static SimplePage<CustomerResponseDto> toResponse(SimplePage<Customer> page) {
-        List<CustomerResponseDto> items = page.items().stream()
-                .map(CustomerResponseDto::from)
-                .toList();
-        return new SimplePage<>(items, page.page(), page.size(), page.hasNext());
-    }
 }

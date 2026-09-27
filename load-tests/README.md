@@ -20,15 +20,7 @@ GET /clientes?cursor=73&limit=20
 
 The response contains `items`, `nextCursor`, and `hasNext`.
 
-Traditional page pagination is also available:
-
-```text
-GET /clientes?page=2&size=20
-```
-
-The response contains `items`, `page`, `size`, and `hasNext`.
-
-The simple pagination does not execute `COUNT(*)`; it fetches one extra row to
+Cursor pagination does not execute `COUNT(*)`; it fetches one extra row to
 calculate `hasNext`.
 
 ## Run one scenario
