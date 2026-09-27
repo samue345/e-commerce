@@ -14,4 +14,19 @@ public record CustomerListRequestDto(String city, Long cursor, Integer limit) {
                 limitValue == null || limitValue.isBlank() ? 20 : Integer.parseInt(limitValue)
         );
     }
+
+    public CustomerListRequestDto sanitize() {
+        String sanitizedCity = city == null ? null : city.trim().replaceAll("\\s+", " ");
+        long sanitizedCursor = cursor == null ? 0 : Math.max(cursor, 0);
+        int sanitizedLimit = Math.min(Math.max(limit == null ? 20 : limit, 1), 100);
+        return new CustomerListRequestDto(sanitizedCity, sanitizedCursor, sanitizedLimit);
+    }
+
+    public long cursorValue() {
+        return cursor == null ? 0 : cursor;
+    }
+
+    public int fetchLimit() {
+        return limit + 1;
+    }
 }

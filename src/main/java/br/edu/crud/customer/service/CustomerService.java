@@ -24,16 +24,12 @@ public final class CustomerService {
         return repository.findByCity(city, Math.min(Math.max(limit, 1), 100));
     }
 
-    public CursorPage<Customer> cursorPage(CustomerListRequestDto request) {
-        int safeLimit = Math.min(Math.max(request.limit(), 1), 100);
-        long currentCursor = request.cursor() == null ? 0 : Math.max(request.cursor(), 0);
-        List<Customer> customers = repository.findAfterId(request.city(), currentCursor, safeLimit + 1);
-        boolean hasNext = customers.size() > safeLimit;
-        if (hasNext) customers = customers.subList(0, safeLimit);
-        Long nextCursor = hasNext && !customers.isEmpty()
-                ? customers.get(customers.size() - 1).id()
-                : null;
-        return new CursorPage<>(customers, nextCursor, hasNext);
+    public CursorPage<Customer> cursorPage(CustomerListRequestDto request)
+    {
+        CustomerListRequestDto query = request.sanitize();
+        List<Customer> customers = repository.findAfterId(
+                query.city(), query.cursorValue(), query.fetchLimit());
+        return CursorPage.from(customers, query.limit(), Customer::id);
     }
 
     public Customer create(CustomerRequestDto request) {
