@@ -206,22 +206,8 @@ terminarem de conectar ao PostgreSQL.
 
 ## 6. Criar e carregar o dataset
 
-O dataset não depende de uma fonte externa. Ele é criado localmente pelo
-script Python e contém somente as colunas necessárias para este trabalho:
-
-- `name`;
-- `email`;
-- `city`;
-- `age`.
-
-O gerador usa uma semente fixa. Portanto, executar o script novamente com os
-mesmos parâmetros produz a mesma massa de dados.
-
-### 6.1 Gerar o CSV e popular o banco
-
-Com o PostgreSQL em execução, o script abaixo faz as duas etapas
-automaticamente: gera o CSV caso ele não exista e carrega os registros no
-banco.
+Com o PostgreSQL em execução, o script `database/populate_database.sh` gera o
+CSV caso ele não exista e carrega os registros no banco.
 
 ```bash
 bash database/populate_database.sh 50000
@@ -241,15 +227,6 @@ O script:
 4. reinicia os IDs;
 5. carrega o CSV usando o comando `COPY` do PostgreSQL;
 6. informa quantos registros foram carregados.
-
-Se for necessário gerar somente o arquivo CSV, sem carregar o banco, o gerador
-Python também pode ser executado diretamente:
-
-```bash
-python3 database/generate_dataset.py --rows 50000
-```
-
-O arquivo será criado em `database/data/clientes_50000.csv`.
 
 Para confirmar a quantidade de registros:
 
