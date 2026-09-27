@@ -45,8 +45,7 @@ implementado daquilo que ainda precisa ser medido no experimento.
 ## Status do trabalho
 
 O código da aplicação e a infraestrutura foram implementados, mas a avaliação
-de desempenho ainda não foi realizada. Os resultados dos cenários A, B e C
-devem ser obtidos posteriormente pelas pessoas responsáveis pelos experimentos.
+de desempenho dos cenários A, B e C ainda não foi realizada.
 
 ### Checklist
 
