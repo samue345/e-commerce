@@ -13,7 +13,9 @@ if [[ ! "$ROWS" =~ ^[1-9][0-9]*$ ]]; then
 fi
 
 if [[ ! -f "$CSV" ]]; then
-  python3 database/generate_dataset.py --rows "$ROWS"
+  # No Windows o comando costuma ser "python"; no Linux/macOS, "python3".
+  if python3 -c "" >/dev/null 2>&1; then PYTHON=python3; else PYTHON=python; fi
+  "$PYTHON" database/generate_dataset.py --rows "$ROWS"
 fi
 
 echo "Aguardando o PostgreSQL ficar pronto..."

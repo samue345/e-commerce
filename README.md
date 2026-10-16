@@ -14,22 +14,22 @@ quanto a leituras e escritas.
 
 - ✅ Implementar uma aplicação CRUD envolvendo clientes, servidor web e banco
   de dados.
-- ❌ Avaliar o desempenho da aplicação quanto a leituras e escritas.
-- ❌ Executar o cenário **A**: 50% de leituras e 50% de escritas.
-- ❌ Executar o cenário **B**: 75% de leituras e 25% de escritas.
-- ❌ Executar o cenário **C**: 25% de leituras e 75% de escritas.
-- ❌ Considerar diferentes clientes simultâneos durante a avaliação. Por
+- ✅ Avaliar o desempenho da aplicação quanto a leituras e escritas.
+- ✅ Executar o cenário **A**: 50% de leituras e 50% de escritas.
+- ✅ Executar o cenário **B**: 75% de leituras e 25% de escritas.
+- ✅ Executar o cenário **C**: 25% de leituras e 75% de escritas.
+- ✅ Considerar diferentes clientes simultâneos durante a avaliação. Por
   exemplo, para 100 clientes no cenário A, usar 50 clientes para leitura e 50
   para escrita.
 - ✅ Preparar um plano de teste com o Apache JMeter.
 - ✅ Preparar grupos de usuários para operações de leitura e escrita.
 - ✅ Popular o banco com pelo menos 50 mil registros. Neste projeto, os dados
   são criados localmente por um gerador reproduzível.
-- ❌ Avaliar o que acontece quando o dataset é reduzido para 20 mil registros.
-- ❌ Avaliar o que acontece com a adição de índices no banco de dados.
-- ❌ Escolher um índice para o experimento.
-- ❌ Verificar se o desempenho das consultas melhora com o índice.
-- ❌ Avaliar como a escolha entre um banco SQL e um banco NoSQL impacta o
+- ✅ Avaliar o que acontece quando o dataset é reduzido para 20 mil registros.
+- ✅ Avaliar o que acontece com a adição de índices no banco de dados.
+- ✅ Escolher um índice para o experimento.
+- ✅ Verificar se o desempenho das consultas melhora com o índice.
+- ✅ Avaliar como a escolha entre um banco SQL e um banco NoSQL impacta o
   sistema.
 
 ### Entrega
@@ -37,14 +37,15 @@ quanto a leituras e escritas.
 - ❌ Entregar o trabalho em PDF no Moodle até **30 de setembro de 2026**.
 - ✅ Preparar a definição da aplicação, o projeto da arquitetura e o cenário
   dos experimentos da Parte 1.
-- ❌ Realizar a avaliação da arquitetura por meio dos experimentos da Parte 2.
+- ✅ Realizar a avaliação da arquitetura por meio dos experimentos da Parte 2.
 - ❌ Considerar a entrega atrasada até **5 de outubro de 2026**, com desconto
   de um ponto por dia de atraso, caso seja necessário.
 
 ## Status do trabalho
 
-O código da aplicação e a infraestrutura foram implementados, mas a avaliação
-de desempenho dos cenários A, B e C ainda não foi realizada.
+A aplicação e os experimentos foram concluídos. Os resultados estão no
+relatório e resumidos em `relatorio/metricas.csv`; os planos de execução das
+consultas estão em `relatorio/explain/`. Veja a seção 9 para o resumo.
 
 ### Checklist
 
@@ -60,24 +61,22 @@ de desempenho dos cenários A, B e C ainda não foi realizada.
 - ✅ Paginação por cursor sem executar `COUNT(*)`.
 - ✅ Plano de teste inicial do Apache JMeter.
 - ✅ Configuração dos cenários de leitura e escrita no plano JMeter.
-- ❌ Executar o cenário A: 50% de leituras e 50% de escritas.
-- ❌ Executar o cenário B: 75% de leituras e 25% de escritas.
-- ❌ Executar o cenário C: 25% de leituras e 75% de escritas.
-- ❌ Repetir os cenários usando 20 mil registros.
-- ❌ Medir tempo de resposta, throughput e erros.
-- ❌ Criar e avaliar índices adicionais.
-- ❌ Comparar os resultados com e sem índice.
-- ❌ Avaliar o impacto da escolha entre SQL e NoSQL.
-- ❌ Organizar os resultados e conclusões no PDF final.
+- ✅ Executar o cenário A: 50% de leituras e 50% de escritas.
+- ✅ Executar o cenário B: 75% de leituras e 25% de escritas.
+- ✅ Executar o cenário C: 25% de leituras e 75% de escritas.
+- ✅ Repetir os cenários usando 20 mil registros.
+- ✅ Medir tempo de resposta, throughput e erros.
+- ✅ Criar e avaliar índices adicionais.
+- ✅ Comparar os resultados com e sem índice.
+- ✅ Avaliar o impacto da escolha entre SQL e NoSQL.
+- ✅ Organizar os resultados e conclusões no relatório (Claude Docs).
+- ❌ Exportar o relatório para PDF e preencher a capa.
 
 ### Estado atual dos índices
 
-Nenhum índice adicional foi criado para antecipar os experimentos. A tabela
-possui somente o índice automático criado pelo PostgreSQL para a chave
-primária `id`.
-
-O índice em `city` apresentado mais adiante neste documento é apenas uma
-possibilidade para o experimento. Ele ainda não foi criado e deve ser avaliado na etapa de desempenhom, então é preciso olhar o código e analisar as querys no banco.
+O banco é criado somente com o índice da chave primária `id`. O índice
+escolhido no experimento, `idx_customers_email`, é criado e removido pelos
+scripts de experimento e não faz parte da migração. Veja a seção 9.
 
 ## 1. O que o projeto faz
 
@@ -136,6 +135,12 @@ As duas instâncias Java são stateless.
 - `nginx/nginx.conf`: configuração do proxy reverso e do balanceamento.
 - `load-tests/clientes-crud.jmx`: plano de teste do Apache JMeter.
 - `load-tests/run-scenarios.sh`: executa os três cenários de carga.
+- `load-tests/run-experiments.sh`: executa a bateria completa de experimentos
+  (50k/20k, com e sem índice, cenários A, B e C).
+- `relatorio/metricas.py`: resume os resultados do JMeter em
+  `relatorio/metricas.csv`.
+- `relatorio/explain.sh`: grava os planos de execução das consultas em
+  `relatorio/explain/`.
 
 ## 4. Requisitos
 
@@ -319,6 +324,12 @@ Também é possível filtrar por cidade:
 curl "http://localhost:8080/clientes?city=Curitiba&limit=10"
 ```
 
+E por e-mail (usado no experimento de índices):
+
+```bash
+curl "http://localhost:8080/clientes?email=cliente7%40exemplo.test&limit=1"
+```
+
 A paginação por cursor não executa `COUNT(*)`. A aplicação busca uma linha a
 mais do que o limite solicitado. Essa linha extra serve para descobrir se
 existe uma próxima página.
@@ -394,7 +405,11 @@ JMeter -> Nginx -> app-1 ou app-2 -> PostgreSQL
 
 O arquivo `load-tests/clientes-crud.jmx` representa dois grupos de requisições:
 
-- **Readers**: enviam requisições `GET /clientes/{id}` para ler clientes;
+- **Readers**: leem clientes. O tipo de leitura é escolhido pela propriedade
+  `readMode`:
+  - `id` (padrão): `GET /clientes/{id}`, busca pela chave primária;
+  - `email`: `GET /clientes?email=clienteN@exemplo.test`, busca por e-mail,
+    usada no experimento de índices;
 - **Writers**: enviam requisições `POST /clientes` para inserir clientes.
 
 Por padrão, esse arquivo está preparado para:
@@ -449,6 +464,7 @@ Parâmetros usados neste projeto:
 - `-Jwriters`: define a quantidade de escritores;
 - `-JdatasetSize`: informa o tamanho do dataset usado para gerar IDs;
 - `-JdurationSeconds`: define a duração do teste;
+- `-JreadMode`: tipo de leitura, `id` (padrão) ou `email`;
 - `-l`: salva os resultados brutos no arquivo `.jtl`;
 - `-e`: gera um relatório HTML;
 - `-o`: define a pasta do relatório HTML.
@@ -469,29 +485,66 @@ DATASET_SIZE=20000 DURATION_SECONDS=120 \
 Os resultados ficam em `load-tests/results/`. Essa pasta é ignorada pelo Git
 porque os relatórios são gerados a cada execução.
 
-## 9. Índices e comparação dos experimentos
+> **Atenção:** esse script não recarrega o banco entre os cenários. Como os
+> escritores inserem centenas de milhares de registros por execução, o cenário
+> B já começa com uma tabela bem maior que o A. Para resultados comparáveis,
+> use o `run-experiments.sh` abaixo.
+
+### Executar todos os experimentos do trabalho
+
+```bash
+bash load-tests/run-experiments.sh
+```
+
+Executa 18 testes de 60 segundos (cerca de 25 minutos):
+
+| Dataset | Leitura | Índice extra | Cenários |
+|---|---|---|---|
+| 50k e 20k | por `id` | nenhum | A, B, C |
+| 50k e 20k | por `email` | nenhum | A, B, C |
+| 50k e 20k | por `email` | `idx_customers_email` | A, B, C |
+
+Antes de **cada** teste o script recarrega o banco com o dataset original e
+cria ou remove o índice. Antes do primeiro teste há um aquecimento de 20
+segundos, descartado. Os resultados ficam em `load-tests/results/experiments/`:
+um `.jtl` e um relatório HTML do JMeter por teste, além de `runs.csv` com a
+quantidade de registros antes e depois de cada teste.
+
+## 9. Índices e resultados dos experimentos
 
 A chave primária `id` já possui índice automático. Ela é usada pela busca por
 ID e pela paginação por cursor.
 
-Para avaliar uma consulta filtrada por cidade, pode-se criar um índice
-adicional:
+### Escolha do índice
+
+O `relatorio/explain.sh` mede cada consulta da API com `EXPLAIN ANALYZE`, sem
+índice extra e com cada candidato (50 mil registros):
+
+| Consulta | Sem índice extra | Com o candidato | Banco usou? |
+|---|---|---|---|
+| `email = ?` | 3,68 ms (lê a tabela inteira) | 0,12 ms com `(email)` | Sim |
+| `city = ? ORDER BY id LIMIT 21` | 0,08 ms (chave primária + filtro) | 0,10 ms com `(city)`; 0,09 ms com `(city, id)` | Não |
+
+O índice em `city` não é usado: há só 10 cidades (baixa seletividade) e a
+consulta encontra os 21 primeiros pela chave primária depois de ler cerca de
+200 linhas. O escolhido foi o índice em `email`:
 
 ```sql
-CREATE INDEX idx_customers_city ON customers (city);
+CREATE INDEX idx_customers_email ON customers (email);
 ```
 
-A comparação recomendada para o trabalho é:
+### Resumo dos resultados (vazão total, req/s, 100 usuários)
 
-1. executar o teste sem o índice adicional;
-2. criar o índice em `city`, porém vocês podem criar outros se acharem necessario;
-3. executar o mesmo teste novamente;
-4. comparar tempo de resposta, throughput e erros.
+| Configuração | A (50/50) | B (75/25) | C (25/75) |
+|---|---:|---:|---:|
+| 50k, leitura por ID | 4.050 | 4.358 | 3.380 |
+| 20k, leitura por ID | 3.985 | 3.760 | 3.609 |
+| 50k, leitura por e-mail sem índice | 1.175 | 703 | 1.472 |
+| 20k, leitura por e-mail sem índice | 1.300 | 1.302 | 1.540 |
+| 50k, leitura por e-mail com índice | 4.106 | 4.553 | 4.033 |
+| 20k, leitura por e-mail com índice | 3.419 | 3.549 | 3.564 |
 
-O resultado depende do tipo de consulta, da quantidade de registros e da
-distribuição das cidades. O índice tende a ajudar consultas que filtram por
-`city`, mas também ocupa espaço e pode aumentar um pouco o custo de inserts e
-updates.
+Nenhuma das 18 execuções teve erro. A análise completa está no relatório.
 
 ## 10. Limpar o ambiente
 

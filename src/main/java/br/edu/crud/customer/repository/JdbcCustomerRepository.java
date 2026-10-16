@@ -38,14 +38,18 @@ public final class JdbcCustomerRepository implements CustomerRepository {
 
     @Override
     public List<Customer> findAfter(CustomerListRequestDto request) {
-        String sql = buildCursorQuery(request.city());
+        String sql = buildCursorQuery(request.city(), request.email());
 
         return queryCustomers(sql, statement -> {
             int parameter = 1;
             statement.setLong(parameter++, request.cursorValue());
 
-            if (hasCityFilter(request.city())) {
+            if (hasFilter(request.city())) {
                 statement.setString(parameter++, request.city());
+            }
+
+            if (hasFilter(request.email())) {
+                statement.setString(parameter++, request.email());
             }
 
             statement.setInt(parameter, request.fetchLimit());
@@ -128,16 +132,18 @@ public final class JdbcCustomerRepository implements CustomerRepository {
         }
     }
 
-    private static String buildCursorQuery(String city) {
-        String cityClause = hasCityFilter(city) ? " AND city = ?" : "";
+    private static String buildCursorQuery(String city, String email) {
+        String cityClause = hasFilter(city) ? " AND city = ?" : "";
+        String emailClause = hasFilter(email) ? " AND email = ?" : "";
         return "SELECT " + CUSTOMER_COLUMNS
                 + " FROM customers WHERE id > ?"
                 + cityClause
+                + emailClause
                 + " ORDER BY id LIMIT ?";
     }
 
-    private static boolean hasCityFilter(String city) {
-        return city != null && !city.isBlank();
+    private static boolean hasFilter(String value) {
+        return value != null && !value.isBlank();
     }
 
     private static void setCustomerParameters(

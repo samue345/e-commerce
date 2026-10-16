@@ -1,0 +1,18 @@
+                                                    QUERY PLAN                                                     
+-------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=1379.01..1379.02 rows=1 width=69) (actual time=3.641..3.643 rows=1 loops=1)
+   Buffers: shared hit=632
+   ->  Sort  (cost=1379.01..1379.02 rows=1 width=69) (actual time=3.640..3.641 rows=1 loops=1)
+         Sort Key: id
+         Sort Method: quicksort  Memory: 25kB
+         Buffers: shared hit=632
+         ->  Seq Scan on customers  (cost=0.00..1379.00 rows=1 width=69) (actual time=0.767..3.613 rows=1 loops=1)
+               Filter: ((id > 0) AND ((email)::text = 'cliente12345@exemplo.test'::text))
+               Rows Removed by Filter: 49999
+               Buffers: shared hit=629
+ Planning:
+   Buffers: shared hit=92
+ Planning Time: 0.624 ms
+ Execution Time: 3.679 ms
+(14 rows)
+

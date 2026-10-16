@@ -1,0 +1,15 @@
+                                                               QUERY PLAN                                                               
+----------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.29..9.50 rows=21 width=69) (actual time=0.034..0.062 rows=21 loops=1)
+   Buffers: shared hit=8
+   ->  Index Scan using customers_pkey on customers  (cost=0.29..2189.47 rows=4993 width=69) (actual time=0.033..0.059 rows=21 loops=1)
+         Index Cond: (id > 0)
+         Filter: ((city)::text = 'Recife'::text)
+         Rows Removed by Filter: 183
+         Buffers: shared hit=8
+ Planning:
+   Buffers: shared hit=144
+ Planning Time: 1.010 ms
+ Execution Time: 0.089 ms
+(11 rows)
+
