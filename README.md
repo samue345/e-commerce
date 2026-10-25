@@ -116,6 +116,16 @@ Depois da promoção, as aplicações são recriadas apontando para
 `postgres-replica`. O procedimento atual é manual, o que deixa claro o tempo
 de recuperação e o impacto da falha no experimento.
 
+Depois que o serviço principal original estiver disponível para ser
+reintegrado, execute:
+
+```bash
+bash database/replication/rejoin_primary.sh
+```
+
+Esse script recria o volume do antigo primary a partir do banco promovido e o
+inicia novamente como réplica.
+
 ### b) Réplicas e protocolo de atualização
 
 A arquitetura usa:

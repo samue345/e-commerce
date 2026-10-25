@@ -59,6 +59,13 @@ docker compose up -d postgres-primary postgres-replica
 O comando `docker compose down -v` remove os volumes do PostgreSQL. Depois da
 recriação, execute novamente o script de população.
 
+Depois de promover a réplica durante um failover, reintegre o antigo primary
+com:
+
+```bash
+bash database/replication/rejoin_primary.sh
+```
+
 ## Gerar os arquivos
 
 No WSL, a partir da raiz do projeto:
