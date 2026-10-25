@@ -78,6 +78,113 @@ O banco é criado somente com o índice da chave primária `id`. O índice
 escolhido no experimento, `idx_customers_email`, é criado e removido pelos
 scripts de experimento e não faz parte da migração. Veja a seção 9.
 
+## Trabalho 2: tolerância a falhas com replicação
+
+O Trabalho 2 consiste em implementar e avaliar uma solução que ofereça algum
+nível de tolerância a falhas para o Trabalho 1 usando replicação.
+
+### Especificação e andamento
+
+- ✅ Replicar os servidores web da aplicação.
+- ✅ Configurar dois nós Java: `app-1` e `app-2`.
+- ✅ Manter os servidores Java stateless.
+- ✅ Adicionar um PostgreSQL primary e um PostgreSQL replica.
+- ✅ Configurar replicação física assíncrona por WAL.
+- ✅ Criar um procedimento para promover a réplica manualmente.
+- ✅ Adicionar retry para a conexão inicial com o banco de dados.
+- ✅ Configurar retry do Nginx entre os servidores Java em falhas de upstream.
+- ❌ Executar o experimento com falha de um servidor web.
+- ❌ Executar o experimento com falha do banco primary.
+- ❌ Medir o tempo de recuperação após cada falha.
+- ❌ Medir possíveis erros e perda de transações durante o failover.
+- ❌ Finalizar o PDF com a Parte 1 e a Parte 2.
+
+### a) Falha de servidor web ou banco de dados
+
+Se `app-1` falhar, o Nginx pode continuar enviando requisições para `app-2`.
+Como os servidores Java não guardam estado local, os clientes não precisam
+ser redistribuídos para uma sessão específica.
+
+Se o PostgreSQL primary falhar, as aplicações perdem a conexão com o banco.
+Nesse caso, a réplica deve ser promovida usando:
+
+```bash
+bash database/replication/promote_replica.sh
+```
+
+Depois da promoção, as aplicações são recriadas apontando para
+`postgres-replica`. O procedimento atual é manual, o que deixa claro o tempo
+de recuperação e o impacto da falha no experimento.
+
+### b) Réplicas e protocolo de atualização
+
+A arquitetura usa:
+
+- duas instâncias Java;
+- um PostgreSQL primary;
+- uma réplica PostgreSQL.
+
+As escritas são realizadas no primary. O PostgreSQL envia os registros de
+WAL para a réplica, que os reaplica de forma assíncrona. Essa escolha reduz o
+custo de cada escrita, mas pode fazer com que uma transação muito recente não
+chegue à réplica antes de uma falha do primary.
+
+Durante o failover, a réplica é promovida e as aplicações são reconectadas ao
+novo banco principal. O antigo primary precisa ser reinicializado como réplica
+antes de voltar à arquitetura, para evitar divergência de dados.
+
+### Retries implementados
+
+- O `DatabaseConfig` tenta estabelecer a conexão inicial várias vezes, com
+  espera progressiva entre as tentativas.
+- O Nginx tenta o outro servidor Java quando encontra erro de conexão, timeout
+  ou respostas `502`, `503` e `504`.
+- Não há retry automático de `POST` e `PUT`, pois repetir uma escrita depois de
+  uma falha de resposta pode criar registros duplicados.
+
+### c) Servidores stateful ou stateless
+
+Os servidores Java são **stateless**:
+
+- não armazenam sessões em memória que sejam necessárias para outro servidor;
+- não armazenam dados de clientes no container;
+- usam o PostgreSQL como fonte persistente dos dados.
+
+Isso permite que o Nginx retire um nó com falha sem exigir migração de sessão.
+O PostgreSQL, por outro lado, é **stateful**, pois mantém os dados persistentes
+e precisa de replicação para que outro nó possa assumir a função do primary.
+
+### d) Impacto do banco SQL
+
+O PostgreSQL é um banco SQL e oferece transações, restrições e consistência
+adequadas para o CRUD de clientes. A replicação física mantém uma cópia muito
+próxima do banco primary, mas exige controle do estado do WAL e um procedimento
+de failover.
+
+A principal consequência para esta solução é que as escritas precisam ser
+direcionadas ao primary. A réplica não deve receber escritas enquanto estiver
+em modo standby. Em troca, ela pode assumir o serviço quando for promovida.
+
+### Cenário de experimentos do Trabalho 2
+
+Os experimentos devem comparar a aplicação normal com situações de falha:
+
+1. executar a aplicação sem falhas e registrar a referência;
+2. parar `app-1` durante as requisições e observar o Nginx;
+3. parar `app-2` e repetir o teste;
+4. parar o PostgreSQL primary;
+5. promover a réplica;
+6. reconectar as aplicações;
+7. medir erros, tempo de recuperação, throughput e dados disponíveis.
+
+### Entrega do Trabalho 2
+
+- ❌ Entregar o PDF no Moodle até **26 de outubro de 2026**.
+- ✅ Preparar o projeto da arquitetura e o cenário de experimentos da Parte 1.
+- ❌ Avaliar a arquitetura por meio dos experimentos da Parte 2.
+- ❌ Considerar a entrega atrasada até **30 de outubro de 2026**, com desconto
+  de um ponto por dia de atraso, caso seja necessário.
+
 ## 1. O que o projeto faz
 
 A aplicação permite:

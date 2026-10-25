@@ -1,5 +1,5 @@
 services:
-  postgres:
+  postgres-primary:
     image: postgres:16-alpine
     container_name: crud-postgres
     restart: unless-stopped
@@ -7,11 +7,54 @@ services:
       POSTGRES_DB: clientes_db
       POSTGRES_USER: clientes_user
       POSTGRES_PASSWORD: clientes_password
+      REPLICATION_USER: replicator
+      REPLICATION_PASSWORD: replicator_password
     ports:
       - "5432:5432"
+    command:
+      - postgres
+      - -c
+      - wal_level=replica
+      - -c
+      - max_wal_senders=10
+      - -c
+      - max_replication_slots=10
+      - -c
+      - listen_addresses=*
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clientes_user -d clientes_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  postgres-replica:
+    image: postgres:16-alpine
+    container_name: crud-postgres-replica
+    restart: unless-stopped
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_DB: clientes_db
+      POSTGRES_USER: clientes_user
+      POSTGRES_PASSWORD: clientes_password
+      REPLICATION_USER: replicator
+      REPLICATION_PASSWORD: replicator_password
+      PRIMARY_HOST: postgres-primary
+    volumes:
+      - postgres_replica_data:/var/lib/postgresql/data
+      - ./database/replication/replica-entrypoint.sh:/usr/local/bin/replica-entrypoint.sh:ro
+    entrypoint: ["/usr/local/bin/replica-entrypoint.sh"]
+    command:
+      - postgres
+      - -c
+      - hot_standby=on
+      - -c
+      - listen_addresses=*
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U clientes_user -d clientes_db"]
       interval: 5s
@@ -24,15 +67,17 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      DB_HOST: postgres
+      DB_HOST: ${DB_HOST:-postgres-primary}
       DB_PORT: 5432
       DB_NAME: clientes_db
       DB_USER: clientes_user
       DB_PASSWORD: clientes_password
       DB_POOL_SIZE: 10
+      DB_CONNECTION_RETRIES: 5
+      DB_RETRY_DELAY_MS: 1000
       APP_PORT: 8080
     depends_on:
-      postgres:
+      postgres-primary:
         condition: service_healthy
 
   app-2:
@@ -41,15 +86,17 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      DB_HOST: postgres
+      DB_HOST: ${DB_HOST:-postgres-primary}
       DB_PORT: 5432
       DB_NAME: clientes_db
       DB_USER: clientes_user
       DB_PASSWORD: clientes_password
       DB_POOL_SIZE: 10
+      DB_CONNECTION_RETRIES: 5
+      DB_RETRY_DELAY_MS: 1000
       APP_PORT: 8080
     depends_on:
-      postgres:
+      postgres-primary:
         condition: service_healthy
 
   nginx:
@@ -66,3 +113,4 @@ services:
 
 volumes:
   postgres_data:
+  postgres_replica_data:

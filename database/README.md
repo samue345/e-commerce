@@ -7,7 +7,7 @@ O dataset é gerado localmente, sem dependência de dados externos.
 Na raiz do projeto:
 
 ```bash
-docker compose up -d postgres
+docker compose up -d postgres-primary postgres-replica
 docker compose ps
 ```
 
@@ -22,11 +22,13 @@ senha: clientes_password
 ```
 
 A aplicação possui duas instâncias Java (`app-1` e `app-2`) e o Nginx distribui
-as requisições entre elas. As duas instâncias são stateless e compartilham o
-mesmo banco PostgreSQL.
+as requisições entre elas. As duas instâncias são stateless e usam o
+`postgres-primary`. O `postgres-replica` recebe as alterações por replicação
+assíncrona de WAL.
 
-A migration `database/migrations/V1__create_clientes.sql` é executada
-automaticamente na primeira criação do volume.
+A migration `database/migrations/V1__create_customers.sql` e o script de criação
+do usuário de replicação são executados automaticamente na primeira criação do
+volume do primary.
 
 ## Popular o banco
 
@@ -46,13 +48,16 @@ O script limpa a tabela, reinicia o contador de IDs e importa o CSV usando o
 `COPY` do PostgreSQL. Portanto, ele deve ser executado novamente entre cenários
 que utilizem tamanhos diferentes de dataset.
 
-Para executar novamente a migration do zero, somente se ainda não houver dados
-importantes no banco:
+Para executar novamente a migration e preparar a replicação do zero, somente
+se ainda não houver dados importantes no banco:
 
 ```bash
 docker compose down -v
-docker compose up -d postgres
+docker compose up -d postgres-primary postgres-replica
 ```
+
+O comando `docker compose down -v` remove os volumes do PostgreSQL. Depois da
+recriação, execute novamente o script de população.
 
 ## Gerar os arquivos
 
@@ -67,17 +72,19 @@ Os arquivos serão criados em `database/data/`.
 
 ## Carregar no PostgreSQL
 
-Depois de criar a tabela usando `database/schema.sql`, use o `COPY` do PostgreSQL:
+O script `populate_database.sh` já cria o CSV, limpa a tabela e usa o `COPY` do
+PostgreSQL:
 
 ```bash
-psql "$DATABASE_URL" -f database/load_dataset.sql
+bash database/populate_database.sh 50000
 ```
 
 Para o teste sem índice adicional, mantenha apenas o índice automático da chave
-primária. Para o teste com índice, execute:
+primária. O índice abaixo é somente uma possibilidade para o experimento; ele
+ainda não foi criado:
 
 ```sql
-CREATE INDEX idx_clientes_cidade ON clientes (cidade);
+CREATE INDEX idx_customers_city ON customers (city);
 ```
 
 A semente padrão torna os dados reproduzíveis entre execuções. Os registros
