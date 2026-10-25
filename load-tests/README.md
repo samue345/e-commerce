@@ -53,3 +53,45 @@ DATASET_SIZE=20000 DURATION_SECONDS=120 bash load-tests/run-scenarios.sh
 ```
 
 The generated `.jtl` files and HTML reports are ignored by Git.
+
+## Fault-tolerance plans
+
+The file `fault-tolerance.jmx` is a read-only plan used while a failure is
+provoked externally. It continuously executes `GET /clientes/{id}` through the
+Nginx endpoint. Read-only requests are used because they can be repeated during
+recovery without creating duplicate customers.
+
+### Failure of a Java node
+
+Run the automated scenario:
+
+```bash
+bash load-tests/run-web-failure-test.sh
+```
+
+The script starts JMeter, stops `app-1` after 20 seconds, waits 30 seconds,
+starts it again and waits for the test to finish. To test `app-2`:
+
+```bash
+APP_SERVICE=app-2 bash load-tests/run-web-failure-test.sh
+```
+
+### Database failover
+
+Run the database scenario:
+
+```bash
+bash load-tests/run-database-failover-test.sh
+```
+
+The script starts JMeter, stops `postgres-primary`, promotes the replica and
+keeps the read load running during the transition. After the experiment,
+reintegrate the old primary:
+
+```bash
+bash database/replication/rejoin_primary.sh
+```
+
+The reports are saved under `load-tests/results/fault-tolerance/`. These plans
+measure the effect of a failure; Docker and the shell scripts are responsible
+for injecting the failure and performing the recovery.
