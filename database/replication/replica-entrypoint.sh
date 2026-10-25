@@ -29,4 +29,5 @@ if [[ ! -s "$PGDATA/PG_VERSION" ]]; then
     -R
 fi
 
+chmod 700 "$PGDATA"
 exec "$@"

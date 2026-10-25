@@ -10,6 +10,6 @@ docker exec crud-postgres-replica pg_ctl \
   promote
 
 echo "Reconnecting the Java applications to the promoted replica..."
-DB_HOST=postgres-replica docker compose up -d --force-recreate app-1 app-2
+DB_HOST=postgres-replica docker compose up -d --no-deps --force-recreate app-1 app-2
 
 echo "Replica promoted. The applications now use postgres-replica."

@@ -34,6 +34,7 @@ services:
     image: postgres:16-alpine
     container_name: crud-postgres-replica
     restart: unless-stopped
+    user: postgres
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_DB: clientes_db
