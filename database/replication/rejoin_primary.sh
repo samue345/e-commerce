@@ -11,7 +11,10 @@ if [[ "$(docker inspect -f '{{.State.Running}}' "$REPLICA_CONTAINER" 2>/dev/null
   exit 1
 fi
 
-PRIMARY_VOLUME="$(docker inspect -f '{{range .Mounts}}{{if eq .Destination "/var/lib/postgresql/data"}}{{.Name}}{{end}}{{end}}' "$PRIMARY_CONTAINER")"
+PRIMARY_VOLUME="$(docker inspect -f '{{range .Mounts}}{{if eq .Destination "/var/lib/postgresql/data"}}{{.Name}}{{end}}{{end}}' "$PRIMARY_CONTAINER" 2>/dev/null || true)"
+if [[ -z "$PRIMARY_VOLUME" ]]; then
+  PRIMARY_VOLUME="$(docker volume ls --format '{{.Name}}' | awk '/_postgres_data$/ {print; exit}')"
+fi
 NETWORK="$(docker inspect -f '{{range $name, $network := .NetworkSettings.Networks}}{{$name}}{{end}}' "$REPLICA_CONTAINER")"
 
 if [[ -z "$PRIMARY_VOLUME" || -z "$NETWORK" ]]; then
