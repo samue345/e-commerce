@@ -95,3 +95,22 @@ bash database/replication/rejoin_primary.sh
 The reports are saved under `load-tests/results/fault-tolerance/`. These plans
 measure the effect of a failure; Docker and the shell scripts are responsible
 for injecting the failure and performing the recovery.
+
+## Results from the first fault-tolerance execution
+
+The first controlled execution used 20 read-only virtual users, a 50,000-row
+dataset and a 60-second JMeter duration. The failure was injected after about
+10 seconds and the service was restored during the test.
+
+| Test | Total requests | Successful | Failed |
+|---|---:|---:|---:|
+| Stop `app-1` | 181,634 | 181,613 | 21 |
+| Stop `app-2` | 221,924 | 221,903 | 21 |
+| Stop database primary and promote replica | 324,952 | 168,195 | 156,757 |
+
+The web-node tests show that the other Java instance continues serving the
+application, with a small number of transient errors during the transition.
+The database test shows a larger interruption because the applications need to
+be reconnected to the promoted database. These numbers are an initial result,
+not a final statistical conclusion; the experiment should be repeated with the
+same configuration before the PDF is finalized.
